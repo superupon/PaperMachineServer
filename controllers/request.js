@@ -1,3 +1,6 @@
+qcloud = require('../qcloud')
+const { mysql } = qcloud
+
 var socket_list = {}
 async function post(ctx, next){
   console.log(ctx)
@@ -7,7 +10,9 @@ async function post(ctx, next){
 
 async function get(ctx, next) {
   console.log('Receive request from client')
+  var date = new Date()
   var request_string = ctx.query['id']
+  var open_id = ctx.query['user_id']
   var pattern = /wx([0-9]+)/
   var result = request_string.match(pattern)
 
@@ -18,9 +23,9 @@ async function get(ctx, next) {
     
     // Request machine is in active list, send command
     if (number in socket_list) {
-      socket_list[number].write('ONE')
+      socket_list[number].write('THREE')
+      mysql('request').insert({wx_id: open_id, device_id: number, time: date}).returning('*').then(res=>{console.log(res)})
       console.log('write one')
-      socket_list[number].write('ONE')
     } // no command
     else
       console.log('No such socket ' + number)
