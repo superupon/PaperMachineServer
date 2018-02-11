@@ -24,6 +24,7 @@ async function get(ctx, next) {
         // Request machine is in active list, send command
         if (number in socket_list) {
             socket_list[number].write('THREE')
+            // insert new database record when successfullly find the device
             mysql('request').insert({ wx_id: open_id, device_id: number, time: date }).returning('*').then(res => { console.log(res) })
             console.log('write one')
         } // no command
