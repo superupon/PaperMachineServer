@@ -54,14 +54,22 @@ net.createServer(function(sock){
   )
 }).listen(PORT, HOST)
 
-var timer = setInterval(log, 30000)
+var timer = setInterval(log, 10000)
 function log()
 {
   console.log('timer');
-  console.log('socket_list length: ' + socket_list.length)
   for (socket in socket_list)
   {
-    socket_list[socket].write('TWO')
-    console.log("socket number: " + socket)
+    if(socket > 2000)
+    {
+      console.log("socket number: " + socket)
+      try{
+        socket_list[socket].write('TWO')
+      }
+      catch(e)
+      {
+        console.log('error')
+      }
+    }
   }
 }
