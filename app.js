@@ -64,7 +64,14 @@ function log()
     {
       console.log("socket number: " + socket)
       try{
-        socket_list[socket].write('TWO')
+        if(socket_list[socket].writable)
+        {
+          socket_list[socket].write('TWO')
+        }
+        else
+        {
+          console.log("socket closed")
+        }
       }
       catch(e)
       {
