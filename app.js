@@ -38,18 +38,45 @@ net.createServer(function(sock){
     result = data.toString().match(pattern)
     if(result != null)
     {
-       if(!(result[1] in socket_list))
+       //if(!(result[1] in socket_list))
+       //if(typeof(socket) != 'string')
        {
           socket_list[result[1]] = sock
+          //console.log('socket get: ' + socket +'' + typeof(socket))
+          //socket_list[result[1]].write('TWO')
+          //console.log('write two ' + result[1])
        }
     }
   })
+  sock.on('error', (err) =>
+    //console.log('Caught socket error')
+    console.log(err.stack)
+  )
 }).listen(PORT, HOST)
 
-//var timer = setInterval(log, 10000)
+var timer = setInterval(log, 10000)
 function log()
 {
   console.log('timer');
-  if(socket)
-    socket.write('ONE');
+  for (socket in socket_list)
+  {
+    if(socket > 2000)
+    {
+      console.log("socket number: " + socket)
+      try{
+        if(socket_list[socket].writable)
+        {
+          socket_list[socket].write('TWO')
+        }
+        else
+        {
+          console.log("socket closed")
+        }
+      }
+      catch(e)
+      {
+        console.log('error')
+      }
+    }
+  }
 }
