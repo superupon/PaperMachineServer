@@ -25,8 +25,9 @@ async function get(ctx, next) {
         // Request machine is in active list, send command
         if (number in socket_list) {
             console.log('number ' + number)
-            socket_list[number].write('THREE')
-            //mysql('request').insert({ wx_id: open_id, device_id: number, time: date }).returning('*').then(res => { console.log(res) })
+            socket_list[number].write('ONE')
+            //socket_list[number].write('ONE')
+            mysql('request').insert({ wx_id: open_id, device_id: number, time: date }).returning('*').then(res => { console.log(res) })
             console.log('write')
         } // no command
         else
