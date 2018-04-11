@@ -11,6 +11,7 @@ mysql('blacklist').select('*').returning('*').then(res=> {console.log(res)})
 function detectBlackList() {
     currentTime = new Date()
     minutes = 4
+    tapCnt = 10
     //targetTime = currentTime - minutes * 1000 * 60 
     targetTime = currentTime - minutes * 1000 * 60 * 60
     console.log("HaHa")
@@ -28,6 +29,9 @@ function detectBlackList() {
                     .then(rs => {
                             for (var record in rs){
                                 console.log(rs[record]['cnt'])
+                                if(rs[record]['cnt'] > tapCnt){
+                                    mysql('blacklist').insert({name : res[temp]['wx_id']}).returning('*')
+                                }
                             }
                             console.log(rs)
                         })
