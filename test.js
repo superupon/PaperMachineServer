@@ -1,6 +1,8 @@
 qcloud = require('./qcloud')
 const { mysql } = qcloud
-var blacklist = setInterval(detectBlackList, 1000)
+var BlackList = []
+setInterval(detectBlackList, 1000)
+setInterval(loadBlacklist, 2000)
 //mysql.schema.createTable('blacklist', function(table) {
 //   table.increments();
 //   table.string('name')
@@ -38,4 +40,12 @@ function detectBlackList() {
             }
         })
     console.log(users)
+}
+
+function loadBlacklist()
+{
+    mysql('blacklist').select('name').returning('*').then(
+        res => { BlackList = res
+        console.log(res)}
+    )
 }
