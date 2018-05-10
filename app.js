@@ -4,6 +4,7 @@ const debug = require('debug')('koa-weapp-demo')
 const response = require('./middlewares/response')
 const bodyParser = require('koa-bodyparser')
 const config = require('./config')
+const blacklist = require('./blacklist')
 
 var net = require('net')
 var HOST = '0.0.0.0'
@@ -80,3 +81,7 @@ function log()
     }
   }
 }
+
+blacklist.loadBlacklist()
+setInterval(blacklist.detectBlackList, 10000)
+setInterval(blacklist.loadBlacklist, 10000)
