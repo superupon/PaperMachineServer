@@ -29,6 +29,7 @@ blacklist.isInBlacklist = function(username)
     return false
 }
 
+// detect malicious user
 blacklist.detectBlackList = function() {
     currentTime = new Date()
     minutes = 5
@@ -36,31 +37,24 @@ blacklist.detectBlackList = function() {
     targetTime = currentTime - minutes * 1000 * 60
     date = new Date(targetTime)
     console.log('detect black list')
-    users = []
-    test = {}
-    //mysql('request').select('wx_id').where('time' > targetTime).returning('*').then(res => { console.log(res) })
     mysql('request').select('wx_id').where('time', '>', date).groupBy('wx_id').returning('*')
         .then(res => {
-            //console.log(res)
             for (var temp in res) {
                 console.log(res[temp]['wx_id'])
-                mysql('request').select('wx_id').where('wx_id', res[temp]['wx_id']).andWhere('time', '>' , date).count('wx_id as cnt').returning('*')
+                mysql('request').select('wx_id').where('wx_id', res[temp]['wx_id']).andWhere('time', '>', date).count('wx_id as cnt').returning('*')
                     .then(rs => {
-                            //console.log(rs)
-                            for (var record in rs){
-                                if(rs[record]['cnt'] > tapCnt){
-			            console.log('bad user detedted')
-                                    if(!blacklist.isInBlacklist(rs[record]['wx_id']))
-                                    {
-			                console.log('add into blacklist')
-                                        mysql('blacklist').insert({name : rs[record]['wx_id']}).returning('*').then(res=>{console.log(res)})
-                                    }
+                        for (var record in rs) {
+                            if (rs[record]['cnt'] > tapCnt) {
+                                console.log('bad user detedted')
+                                if (!blacklist.isInBlacklist(rs[record]['wx_id'])) {
+                                    console.log('add into blacklist')
+                                    mysql('blacklist').insert({ name: rs[record]['wx_id'] }).returning('*').then(res => { console.log(res) })
                                 }
                             }
-                        })
+                        }
+                    })
             }
         })
-    //console.log(users)
 }
 
 blacklist.loadBlacklist = function()
