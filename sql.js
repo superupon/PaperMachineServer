@@ -22,3 +22,7 @@ function getAdminAccounts() {
             console.log(res)
         })
 }
+
+createAdmin()
+insertRootAccount()
+getAdminAccounts()
