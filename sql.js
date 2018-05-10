@@ -14,3 +14,11 @@ function insertRootAccount() {
         .insert({ name: 'root', password: 'root' })
         .then(res => { console.log(res) })
 }
+
+function getAdminAccounts() {
+    mysql('admin')
+        .select('*')
+        .then(res => {
+            console.log(res)
+        })
+}
