@@ -6,7 +6,7 @@ function createAdmin() {
         table.string('name')
         table.string('password')
         table.timestamps()
-    })
+    }).then(res => {console.log(res)})
 }
 
 function insertRootAccount() {
@@ -23,6 +23,6 @@ function getAdminAccounts() {
         })
 }
 
-createAdmin()
-insertRootAccount()
+//createAdmin()
+//insertRootAccount()
 getAdminAccounts()
