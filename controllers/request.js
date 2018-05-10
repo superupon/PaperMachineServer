@@ -1,5 +1,6 @@
 qcloud = require('../qcloud')
 const { mysql } = qcloud
+var blacklist = require('../blacklist')
 
 var socket_list = {}
 async function post(ctx, next) {
@@ -24,11 +25,16 @@ async function get(ctx, next) {
 
         // Request machine is in active list, send command
         if (number in socket_list) {
-            // insert new database record when successfullly find the device
-            console.log('number ' + number)
-            socket_list[number].write('ONE')
-            mysql('request').insert({ wx_id: open_id, device_id: number, time: date }).returning('*').then(res => { console.log(res) })
-            console.log('write')
+            console.log(open_id)
+            console.log('is in black list: ' + blacklist.isInBlacklist(open_id))
+            if(!blacklist.isInBlacklist(open_id))
+            {
+                 // insert new database record when successfullly find the device
+                 console.log('number ' + number)
+                 socket_list[number].write('ONE')
+                 mysql('request').insert({ wx_id: open_id, device_id: number, time: date }).returning('*').then(res => { console.log(res) })
+                 console.log('write')
+            }
         } // no command
         else
             console.log('No such socket ' + number)
