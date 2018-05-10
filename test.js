@@ -1,6 +1,10 @@
 qcloud = require('./qcloud')
 const { mysql } = qcloud
+// Global Data structure to store Black List in memory
 var BlackList = []
+// Load data from data base
+loadBlacklist()
+
 setInterval(detectBlackList, 1000)
 setInterval(loadBlacklist, 2000)
 //mysql.schema.createTable('blacklist', function(table) {
@@ -8,7 +12,20 @@ setInterval(loadBlacklist, 2000)
 //   table.string('name')
 //}).then(res=>{console.log(res)})
 //mysql('blacklist').insert({name : 'test'}).returning('*').then(res=> {console.log(res)})
-mysql('blacklist').select('*').returning('*').then(res=> {console.log(res)})
+//mysql('blacklist').select('*').returning('*').then(res=> {console.log(res)})
+
+// determine username is in black list or not
+function isInBlacklist(username)
+{
+    for (var temp in BlackList)
+    {
+       if(username == BlackList[temp]['name']) 
+       {
+          return true
+       }
+    }
+    return false
+}
 
 function detectBlackList() {
     currentTime = new Date()
@@ -33,7 +50,11 @@ function detectBlackList() {
                                 //console.log(rs[record]['cnt'])
                                 if(rs[record]['cnt'] > tapCnt){
                                     console.log('add into blacklist')
-                                    mysql('blacklist').insert({name : rs[record]['wx_id']}).returning('*').then(res=>{console.log(res)})
+                                    //mysql('blacklist').insert({name : rs[record]['wx_id']}).returning('*').then(res=>{console.log(res)})
+                                    console.log('isInBlackList ' + isInBlacklist(rs[record]['wx_id']))
+                                    if (rs[record]['wx_id'] in BlackList){
+                                        console.log('in blacklist')
+                                    }
                                 }
                             }
                             console.log(rs)
