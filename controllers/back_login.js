@@ -4,6 +4,7 @@ async function get (ctx, next) {
     console.log('back_login get')
     console.log(ctx.query['name'])
     console.log(ctx.query['password'])
+    ctx.body = "HiHi"
     database.isAdminUser(ctx.query['name'], ctx.query['password'])
 }
 

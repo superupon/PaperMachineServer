@@ -8,7 +8,6 @@ database.isAdminUser = function(username, pswd)
     .select({name : username, password : pswd})
     .returnning('*')
     .then(res => {
-        ctx.body = "test return"
         console.log(username + pswd)
         console.log(res)})
 }
