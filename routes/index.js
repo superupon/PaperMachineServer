@@ -35,9 +35,9 @@ router.post('/message', controllers.message.post)
 router.get('/request', controllers.request.get)
 router.post('/request', controllers.request.post)
 
-router.get('/back_login', controllers.request.get)
-router.post('/back_login', controllers.tunnel.post)
+router.get('/back_login', controllers.back_login.get)
+router.post('/back_login', controllers.back_login.post)
 
-router.get('/data', controllers.request.get)
-router.post('/data', controllers.tunnel.post)
+router.get('/data', controllers.data.get)
+router.post('/data', controllers.data.post)
 module.exports = router
