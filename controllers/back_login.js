@@ -1,11 +1,11 @@
 var database = require('../database')
 
 async function get (ctx, next) {
-    console.log('back_login get')
-    console.log(ctx.query['name'])
-    console.log(ctx.query['password'])
-    ctx.body = "HiHi"
-    database.isAdminUser(ctx.query['name'], ctx.query['password'])
+    result = await database.isAdminUser(ctx.query['name'], ctx.query['password'])
+    if ( result )
+        ctx.body = { result : true}
+    else
+        ctx.body = { result : false}
 }
 
 async function post (ctx, next) {
