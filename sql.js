@@ -9,6 +9,22 @@ function createAdmin() {
     }).then(res => {console.log(res)})
 }
 
+function createDevices() {
+    mysql.schema.createTable('devices', function (table){
+       table.string('card_id')
+       table.string('number')
+       table.string('address')
+    }).then(res => {console.log(res)})
+}
+
+function insertDevices() {
+    mysql('devices')
+        .insert({ card_id : '460068111016044',
+                  number : '1'})
+        .then(res => { console.log(res)})
+
+}
+
 function insertRootAccount() {
     mysql('admin')
         .insert({ name: 'root', password: 'root' })
@@ -25,4 +41,6 @@ function getAdminAccounts() {
 
 //createAdmin()
 //insertRootAccount()
-getAdminAccounts()
+//getAdminAccounts()
+//createDevices()
+//insertDevices()
