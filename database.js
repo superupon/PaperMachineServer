@@ -22,10 +22,30 @@ database.isAdminUser = async function(username, pswd) {
     }
 }
 
+database.getBlacklistUser = async function(ofst) {
+    ret = []
+    console.log('getBlacklistUser')
+    await mysql('blacklist')
+    .select('*')
+    .limit(10)
+    .offset(ofst)
+    .then(res => {
+        console.log(res)
+        ret = res
+    })
+    return ret
+}
+
 database.Test = async function() {
     result = await database.isAdminUser('hi', 'hi')
     console.log(result)
     result = await database.isAdminUser('root', 'root')
+    console.log(result)
+
+    // Test getBlacklistUser
+    result = await database.getBlacklistUser(0)
+    console.log(result)
+    result = await database.getBlacklistUser('0')
     console.log(result)
 }
 
