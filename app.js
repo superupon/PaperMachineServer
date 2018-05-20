@@ -11,6 +11,7 @@ var HOST = '0.0.0.0'
 var PORT = 3000
 var socket = 0
 var socket_list = require('./controllers/request.js').socket_list
+var socket_state = require('./controllers/request.js').socket_state
 // 使用响应处理中间件
 app.use(response)
 
@@ -37,12 +38,13 @@ net.createServer(function(sock){
     console.log(data.toString()+count)
     count++
     result = data.toString().match(pattern)
-    if(result != null)
+    if(result != null && result[1].length == 15)
     {
        //if(!(result[1] in socket_list))
        //if(typeof(socket) != 'string')
        {
           socket_list[result[1]] = sock
+          socket_state[result[1]] = true
           //console.log('socket get: ' + socket +'' + typeof(socket))
           //socket_list[result[1]].write('TWO')
           //console.log('write two ' + result[1])
@@ -63,15 +65,11 @@ function log()
   {
     if(socket > 2000)
     {
-      console.log("socket number: " + socket)
+      console.log("socket number: " + socket + " state: " + socket_state[socket])
       try{
         if(socket_list[socket].writable)
         {
           socket_list[socket].write('TWO')
-        }
-        else
-        {
-          console.log("socket closed")
         }
       }
       catch(e)
@@ -82,6 +80,14 @@ function log()
   }
 }
 
+function cleanSocketState() {
+  console.log('clean socket state')
+  for (socket in socket_state) {
+    socket_state[socket] = false
+  }
+}
+
 blacklist.loadBlacklist()
 setInterval(blacklist.detectBlackList, 10000)
 setInterval(blacklist.loadBlacklist, 10000)
+setInterval(cleanSocketState, 60000)
