@@ -3,6 +3,7 @@ const { mysql } = qcloud
 var blacklist = require('../blacklist')
 
 var socket_list = {}
+var socket_state = {}
 async function post(ctx, next) {
     console.log(ctx)
     console.log('post')
@@ -44,5 +45,6 @@ async function get(ctx, next) {
 module.exports = {
     post,
     get,
-    socket_list
+    socket_list,
+    socket_state
 }
