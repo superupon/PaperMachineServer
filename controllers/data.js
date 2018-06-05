@@ -57,6 +57,8 @@ async function get (ctx, next) {
         response['totalToday'] = result
         result = await database.getTotalRecordNumberForDevice(ctx.query['card_id'])
         response['total'] = result
+        result = await database.getTotalUserNumForDevice(ctx.query['card_id'])
+        response['totalUserNum'] = result
         ret = response
     }
     else if (ctx.query['type'] == 7) {
