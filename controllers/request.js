@@ -15,7 +15,8 @@ async function get(ctx, next) {
     var date = new Date()
     var request_string = ctx.query['id']
     console.log('Request string: ' + request_string)
-    var open_id = ctx.query['user_id']
+    var user_id = ctx.query['user_id']
+    var op_id = ctx.query['open_id']
     var pattern = /wx([0-9]+)/
     var result = request_string.match(pattern)
 
@@ -26,14 +27,14 @@ async function get(ctx, next) {
 
         // Request machine is in active list, send command
         if (number in socket_list) {
-            console.log(open_id)
-            console.log('is in black list: ' + blacklist.isInBlacklist(open_id))
-            if(!blacklist.isInBlacklist(open_id))
+            console.log(user_id)
+            console.log('is in black list: ' + blacklist.isInBlacklist(user_id))
+            if(!blacklist.isInBlacklist(user_id))
             {
                  // insert new database record when successfullly find the device
                  console.log('number ' + number)
                  socket_list[number].write('ONE')
-                 mysql('request').insert({ wx_id: open_id, device_id: number, time: date }).returning('*').then(res => { console.log(res) })
+                 mysql('request').insert({ wx_id: user_id, open_id : op_id , device_id: number, time: date }).returning('*').then(res => { console.log(res) })
                  console.log('write')
             }
         } // no command
