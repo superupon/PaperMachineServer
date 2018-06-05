@@ -88,6 +88,12 @@ database.getDeviceRecord = async function(deviceCardId, ofst) {
     .then(res => {
         ret = res
     })
+
+    for(var index in ret)
+    {
+        ret[index].time = ret[index].time.toLocaleDateString() + ' ' + ret[index].time.toLocaleTimeString()
+    }
+
     return ret
 }
 
@@ -105,7 +111,7 @@ database.getTotalRecordNumberForDevice = async function(deviceCardId) {
 
 database.getTotalRecordNumberForDeviceOneDate = async function(deviceCardId, date) {
     ret = 0
-    date = date - (date % 86400000)
+    date = date - (date % 86400000) - 8 * 60 * 60 * 1000
     await mysql('request')
     .select('*')
     .where('device_id', deviceCardId)
@@ -115,6 +121,18 @@ database.getTotalRecordNumberForDeviceOneDate = async function(deviceCardId, dat
         ret = res[0].cnt
     })
     return ret
+}
+
+database.getTotalUserNumForDevice = async function(deviceCardId) {
+   ret = 0
+   await mysql('request')
+   .select('*')
+   .where('device_id', deviceCardId)
+   .groupBy('wx_id')
+   .then(res => {
+       ret = res.length
+   })
+   return ret
 }
 
 
@@ -145,14 +163,14 @@ database.Test = async function() {
     console.log('has device 4600681110160: ' + result)
 
     console.log('---------------insertDevice-------')
-    await database.insertDevice('460068111016044', '1', 'site A')
-    result = await database.getDevices(0)
-    console.log(result)
+    //await database.insertDevice('460068111016044', '1', 'site A')
+    //result = await database.getDevices(0)
+    //console.log(result)
 
     console.log('---------------deleteDevice-------')
-    await database.deleteDevice('460068111016044')
-    result = await database.getDevices(0)
-    console.log(result)
+    //await database.deleteDevice('460068111016044')
+    //result = await database.getDevices(0)
+    //console.log(result)
     await database.deleteDevice('')
     result = await database.getDevices(0)
     console.log(result)
@@ -161,6 +179,8 @@ database.Test = async function() {
     result = await database.getDeviceRecord('460068111016038', 0)
     console.log(result)
     result = await database.getDeviceRecord('460043906007803', 0)
+    console.log(result)
+    result = await database.getDeviceRecord('460068111016040', 0)
     console.log(result)
 
     console.log('---------------getTotalRecordNumberForDevice-------')
@@ -174,6 +194,17 @@ database.Test = async function() {
     console.log('460068111016038 total number: ' + result)
     result = await database.getTotalRecordNumberForDeviceOneDate('460043906007809', new Date())
     console.log('460043906007809 total number: ' + result)
-}
+    result = await database.getTotalRecordNumberForDeviceOneDate('460068111016035', new Date())
+    console.log('460068111016035 total number: ' + result)
 
+    console.log('---------------getTotalUserNumForDevice-------')
+    result = await database.getTotalUserNumForDevice('460068111016038')
+    console.log('460068111016038 user number: ' + result)
+    result = await database.getTotalUserNumForDevice('460043906007809')
+    console.log('460043906007809 user number: ' + result)
+
+    //date = new Date()
+    //mysql('request').insert({wx_id : '渔人不渔', device_id : '460043906007809', time : date}).returning('*').then(res=> {console.log(res)})
+
+}
 module.exports = database
