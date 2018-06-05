@@ -65,4 +65,20 @@ blacklist.loadBlacklist = function()
     )
 }
 
+blacklist.Test = function(){
+   blacklist.loadBlacklist()
+   setTimeout(function(){
+   console.log(BlackList)
+   console.log(blacklist.isInBlacklist('天意'))
+   console.log(blacklist.isInBlacklist('A ?志娟'))
+   console.log(blacklist.isInBlacklist('A 赵志娟'))
+   }, 3000)
+   setTimeout(function(){
+   //mysql('blacklist').insert({ name: 'A 赵志娟' }).returning('*').then(res => { console.log(res) })
+   console.log(BlackList)
+   }, 3000)
+}
+
 module.exports = blacklist
+
+
