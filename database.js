@@ -64,15 +64,28 @@ database.hasDevice = async function(deviceCardId){
     return ret
 }
 
-database.insertDevice = async function(deviceCardId, deviceNumber, deviceAddress){
-    await mysql('devices')
-    .insert({card_id : deviceCardId,
-             number : deviceNumber,
-             address : deviceAddress})
+database.insertDevice = async function (
+  deviceCardId,
+  deviceNumber,
+  deviceAddress,
+  prizeActivation,
+  prizeName,
+  prizeRate,
+  prizeUpLimit) {
+  await mysql('devices')
+    .insert({
+      card_id: deviceCardId,
+      number: deviceNumber,
+      address: deviceAddress,
+      prize_activation: prizeActivation,
+      prize_name: prizeName,
+      prize_rate: prizeRate,
+      prize_uplimit: prizeUpLimit
+    })
 }
 
-database.deleteDevice = async function(deviceCardId) {
-    await mysql('devices')
+database.deleteDevice = async function (deviceCardId) {
+  await mysql('devices')
     .where('card_id', deviceCardId)
     .del()
 }
