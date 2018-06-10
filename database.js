@@ -189,6 +189,12 @@ database.getPrizeInfo = async function(cardId) {
   return ret
 }
 
+database.setPrizeUpLimit = async function(cardId, prizeUpLimit) {
+  await mysql('devices')
+    .update('prize_uplimit', prizeUpLimit)
+    .where('card_id', card_id)
+}
+
 database.Test = async function() {
     console.log('---------------isAdminUser--------')
     result = await database.isAdminUser('hi', 'hi')
@@ -259,14 +265,16 @@ database.Test = async function() {
     //date = new Date()
     //mysql('request').insert({wx_id : '渔人不渔', device_id : '460043906007809', time : '2018-06-10 00:10:00'}).returning('*').then(res=> {console.log(res)})
     console.log('---------------getTodayCntForUserName---------')
-    result = await database.getTodayCntForUserName()
+    result = await database.getTodayCntForUserName('渔人不渔')
     console.log(result)
     console.log('---------------getTodayCntForOpenId---------')
-    result = await database.getTodayCntForOpenId()
+    result = await database.getTodayCntForOpenId('')
     console.log(result)
     console.log('---------------getPrizeInfo-----------------')
     result = await database.getPrizeInfo()
     console.log(result)
+    console.log('---------------setPrizeUpLimit--------------')
+    await database.setPrizeUpLimit('460043906007809', 10)
 
 }
 module.exports = database
