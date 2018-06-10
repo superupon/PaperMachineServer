@@ -148,6 +148,46 @@ database.getTotalUserNumForDevice = async function(deviceCardId) {
    return ret
 }
 
+database.getTodayCntForUserName = async function(userName) {
+  ret = 0
+  date = new Date()
+  date = date - (date % 86400000) - 8 * 60 * 60 * 1000
+  await mysql('request')
+    .select('*')
+    .where('wx_id', userName)
+    .where('time', '>', new Date(date))
+    .count('wx_id as cnt')
+    .then(res => {
+      ret = res[0].cnt
+    })
+  return ret
+}
+
+database.getTodayCntForOpenId = async function(openId) {
+  ret = 0
+  date = new Date()
+  date = date - (date % 86400000) - 8 * 60 * 60 * 1000
+  await mysql('request')
+    .select('*')
+    .where('open_id', openId)
+    .where('time', '>', new Date(date))
+    .count('open_id as cnt')
+    .then(res => {
+      ret = res[0].cnt
+    })
+  return ret
+}
+
+database.getPrizeInfo = async function(cardId) {
+  ret = 0
+  await mysql('devices')
+    .select('*')
+    .where('card_id', cardId)
+    .then(res => {
+      ret = result
+    })
+  return ret
+}
 
 database.Test = async function() {
     console.log('---------------isAdminUser--------')
@@ -217,7 +257,16 @@ database.Test = async function() {
     console.log('460043906007809 user number: ' + result)
 
     //date = new Date()
-    //mysql('request').insert({wx_id : '渔人不渔', device_id : '460043906007809', time : date}).returning('*').then(res=> {console.log(res)})
+    //mysql('request').insert({wx_id : '渔人不渔', device_id : '460043906007809', time : '2018-06-10 00:10:00'}).returning('*').then(res=> {console.log(res)})
+    console.log('---------------getTodayCntForUserName---------')
+    result = await database.getTodayCntForUserName()
+    console.log(result)
+    console.log('---------------getTodayCntForOpenId---------')
+    result = await database.getTodayCntForOpenId()
+    console.log(result)
+    console.log('---------------getPrizeInfo-----------------')
+    result = await database.getPrizeInfo()
+    console.log(result)
 
 }
 module.exports = database
