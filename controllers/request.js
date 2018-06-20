@@ -1,6 +1,7 @@
 qcloud = require('../qcloud')
 const { mysql } = qcloud
 var blacklist = require('../blacklist')
+var database = require('../database')
 
 var socket_list = {}
 var socket_state = {}
@@ -19,6 +20,11 @@ async function get(ctx, next) {
     var op_id = ctx.query['open_id']
     var pattern = /wx([0-9]+)/
     var result = request_string.match(pattern)
+    retVal = {}
+    retVal['is_first'] = false
+    retVal['is_prized'] = 0
+    retVal['prize_name'] = ''
+    console.log(retVal)
 
     if (result != null) {
         var number = result[1]
@@ -26,20 +32,58 @@ async function get(ctx, next) {
             console.log('Error: undefined socket list')
 
         // Request machine is in active list, send command
-        if (number in socket_list) {
+        if (number in socket_list && socket_state[number]) {
             console.log(user_id)
             console.log('is in black list: ' + blacklist.isInBlacklist(user_id))
             if(!blacklist.isInBlacklist(user_id))
             {
+                 is_prized = false
+                 isFirstTimeToday = false
+                 prizeInfo = await database.getPrizeInfo(number)
+                 console.log(prizeInfo)
+                 if (prizeInfo.prize_activation != 0) {
+                    userIdCnt = await database.getTodayCntForUserName(user_id)
+                    openIdCnt = await database.getTodayCntForOpenId(op_id)
+                    if(op_id == undefined)
+                      openIdCnt = 0
+                    isFirstTimeToday = (userIdCnt == 0 && openIdCnt == 0)
+                    isFirstTimeToday = true
+                    console.log('userInCnt ' + userIdCnt)
+                    console.log('openIdCnt ' + openIdCnt)
+                    console.log('isFirstTimeToday ' + isFirstTimeToday)
+                    if(isFirstTimeToday && prizeInfo.prize_uplimit > 0)
+                    {
+                       randVal = Math.random()
+                       console.log('randVal ' + randVal)
+                       if(randVal < prizeInfo.prize_rate)
+                         is_prized = true
+                    }
+                 }
+
                  // insert new database record when successfullly find the device
                  console.log('number ' + number)
-                 socket_list[number].write('ONE')
-                 mysql('request').insert({ wx_id: user_id, open_id : op_id , device_id: number, time: date }).returning('*').then(res => { console.log(res) })
+                 if(user_id != '渔人不渔')
+                 {
+                   console.log("no for yurenbuyu")
+                   socket_list[number].write('ONE')
+                 }
+                 else
+                 {
+                   console.log("yurenbuyu")
+                 }
+                 mysql('request').insert({ wx_id: user_id, open_id : op_id , device_id: number, time: date, isPrized : is_prized }).returning('*').then(res => { console.log(res) })
+                 if(is_prized)
+                   await database.setPrizeUpLimit(number, prizeInfo.prize_uplimit - 1)
                  console.log('write')
+                 retVal['is_first'] = isFirstTimeToday
+                 retVal['is_prized'] = is_prized
+                 retVal['prize_name'] = prizeInfo.prize_name
             }
         } // no command
         else
             console.log('No such socket ' + number)
+        console.log(retVal)
+        ctx.body = retVal
     }
 }
 
