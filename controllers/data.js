@@ -3,7 +3,6 @@ var socket_list = require('./request').socket_list
 var socket_state = require('./request').socket_state
 async function getNewDevices() {
     var result = []
-    console.log(socket_list)
     console.log(result)
     console.log(typeof(result))
     for(var socket in socket_list)
