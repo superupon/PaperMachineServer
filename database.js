@@ -124,6 +124,7 @@ database.getTotalRecordNumberForDevice = async function(deviceCardId) {
 
 database.getTotalRecordNumberForDeviceOneDate = async function(deviceCardId, date) {
     ret = 0
+    date = date - 10 + 8 * 60 * 60 * 1000
     date = date - (date % 86400000) - 8 * 60 * 60 * 1000
     await mysql('request')
     .select('*')
@@ -150,7 +151,7 @@ database.getTotalUserNumForDevice = async function(deviceCardId) {
 
 database.getTodayCntForUserName = async function(userName) {
   ret = 0
-  date = new Date()
+  date = new Date() - 10 + 8 * 60 * 60 * 1000
   date = date - (date % 86400000) - 8 * 60 * 60 * 1000
   await mysql('request')
     .select('*')
@@ -165,7 +166,7 @@ database.getTodayCntForUserName = async function(userName) {
 
 database.getTodayCntForOpenId = async function(openId) {
   ret = 0
-  date = new Date()
+  date = new Date() - 10 + 8 * 60 * 60 * 1000
   date = date - (date % 86400000) - 8 * 60 * 60 * 1000
   await mysql('request')
     .select('*')
@@ -184,7 +185,7 @@ database.getPrizeInfo = async function(cardId) {
     .select('*')
     .where('card_id', cardId)
     .then(res => {
-      ret = result
+      ret = res[0]
     })
   return ret
 }
@@ -192,7 +193,7 @@ database.getPrizeInfo = async function(cardId) {
 database.setPrizeUpLimit = async function(cardId, prizeUpLimit) {
   await mysql('devices')
     .update('prize_uplimit', prizeUpLimit)
-    .where('card_id', card_id)
+    .where('card_id', cardId)
 }
 
 database.Test = async function() {
@@ -263,15 +264,18 @@ database.Test = async function() {
     console.log('460043906007809 user number: ' + result)
 
     //date = new Date()
-    //mysql('request').insert({wx_id : '渔人不渔', device_id : '460043906007809', time : '2018-06-10 00:10:00'}).returning('*').then(res=> {console.log(res)})
+    //await mysql('request').insert({wx_id : '渔人不渔', open_id : 'oOATW5Xtr3gXhGd5BXdhI7Ww04h0',device_id : '460043906007809', time : '2018-06-10 00:30:00'}).returning('*').then(res=> {console.log(res)})
     console.log('---------------getTodayCntForUserName---------')
     result = await database.getTodayCntForUserName('渔人不渔')
     console.log(result)
     console.log('---------------getTodayCntForOpenId---------')
-    result = await database.getTodayCntForOpenId('')
+    result = await database.getTodayCntForOpenId('oOATW5Xtr3gXhGd5BXdhI7Ww04h0')
     console.log(result)
     console.log('---------------getPrizeInfo-----------------')
-    result = await database.getPrizeInfo()
+    result = await database.getPrizeInfo('460043906007809')
+    console.log(result)
+    console.log('---------------getPrizeInfo-----------------')
+    result = await database.getPrizeInfo('460041683803062')
     console.log(result)
     console.log('---------------setPrizeUpLimit--------------')
     await database.setPrizeUpLimit('460043906007809', 10)
