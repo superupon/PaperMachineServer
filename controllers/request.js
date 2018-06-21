@@ -37,6 +37,10 @@ async function get(ctx, next) {
             console.log('is in black list: ' + blacklist.isInBlacklist(user_id))
             if(!blacklist.isInBlacklist(user_id))
             {
+                 console.log('number ' + number)
+                 socket_list[number].write('ONE')
+                 console.log('write')
+
                  is_prized = false
                  isFirstTimeToday = false
                  prizeInfo = await database.getPrizeInfo(number)
@@ -47,6 +51,7 @@ async function get(ctx, next) {
                     if(op_id == undefined)
                       openIdCnt = 0
                     isFirstTimeToday = (userIdCnt == 0 && openIdCnt == 0)
+                    // TODO delete this line, debug purpose
                     isFirstTimeToday = true
                     console.log('userInCnt ' + userIdCnt)
                     console.log('openIdCnt ' + openIdCnt)
@@ -61,20 +66,9 @@ async function get(ctx, next) {
                  }
 
                  // insert new database record when successfullly find the device
-                 console.log('number ' + number)
-                 if(user_id != '渔人不渔')
-                 {
-                   console.log("no for yurenbuyu")
-                   socket_list[number].write('ONE')
-                 }
-                 else
-                 {
-                   console.log("yurenbuyu")
-                 }
                  mysql('request').insert({ wx_id: user_id, open_id : op_id , device_id: number, time: date, isPrized : is_prized }).returning('*').then(res => { console.log(res) })
                  if(is_prized)
                    await database.setPrizeUpLimit(number, prizeInfo.prize_uplimit - 1)
-                 console.log('write')
                  retVal['is_first'] = isFirstTimeToday
                  retVal['is_prized'] = is_prized
                  retVal['prize_name'] = prizeInfo.prize_name
